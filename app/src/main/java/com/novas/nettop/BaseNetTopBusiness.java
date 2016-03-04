@@ -37,17 +37,17 @@ public class BaseNetTopBusiness {
     }
     public void  startHttpUrlConnection(NetTopRequest request)
     {
-        if(request.responseType==HttpResponseType.RESPONSE_TYPE_TEXT)
+        if(request.responseType==HttpResponseType.REQUSET_WITH_PARAMS)
         {
-            startHttpTextConnection(request);
+            startHttpParamsConnection(request);
         }
         else
         {
-            startHttpImageDownloadConnection(request);
+            startHttpNoParamsConnection(request);
         }
     }
     //从服务器获取图片,get情况
-    public HttpResponse startHttpImageDownloadConnection(NetTopRequest request)
+    public HttpResponse startHttpNoParamsConnection(NetTopRequest request)
     {
         HttpResponse response=null;
         try {
@@ -75,7 +75,7 @@ public class BaseNetTopBusiness {
         return response;
     }
     //post情况
-    public HttpResponse startHttpTextConnection(NetTopRequest request) {
+    public HttpResponse startHttpParamsConnection(NetTopRequest request) {
         HttpResponse response=null;
         try {
             url = new URL(request.requesturl);

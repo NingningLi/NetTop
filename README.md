@@ -33,4 +33,4 @@
     public String user="novsssse3333as";
     public String password="mengfanshan";
 }
-必须实现Request接口，其中user，password为上传参数key，requestUrl变量名不可以改变，表示请求网址
+必须实现Request接口，其中user，password为上传参数key，requestUrl变量名不可以改变，表示请求网址,修饰符类型可以为public，private均可

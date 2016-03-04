@@ -26,11 +26,11 @@ public class NetTopRequest implements Serializable
         this.files=files;
         if(this.dataParams==null||this.dataParams.isEmpty())
         {
-            this.responseType=HttpResponseType.RESPONSE_TYPE_IMAGE;
+            this.responseType=HttpResponseType.REQUSET_NO_PARAMS;
         }
         else
         {
-            this.responseType=HttpResponseType.RESPONSE_TYPE_TEXT;
+            this.responseType=HttpResponseType.REQUSET_WITH_PARAMS;
         }
     }
     public void destroy()

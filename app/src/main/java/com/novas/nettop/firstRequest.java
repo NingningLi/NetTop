@@ -7,7 +7,7 @@ import java.io.File;
  */
 public class firstRequest implements Request
 {
-    public String requestUrl="http://192.168.56.1:18080/login-mobile";
-    public String user="novsssse3333";
-    public String password="mengfanshan";
+     String requestUrl="http://192.168.56.1:18080/login-mobile";
+     String user="novsssse3333";
+     String password="mengfanshan";
 }

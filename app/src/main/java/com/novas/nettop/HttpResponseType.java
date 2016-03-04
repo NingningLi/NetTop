@@ -5,6 +5,6 @@ package com.novas.nettop;
  */
 public class HttpResponseType
 {
-    public static int RESPONSE_TYPE_TEXT=0x0001;
-    public static int RESPONSE_TYPE_IMAGE=0x0002;
+    public static int REQUSET_WITH_PARAMS=0x0001;
+    public static int REQUSET_NO_PARAMS=0x0002;
 }

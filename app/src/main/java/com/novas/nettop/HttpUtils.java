@@ -41,7 +41,7 @@ public class HttpUtils
     public static NetTopRequest parseDataToNetTopRequest(Request request)
     {
         Class cl=request.getClass();
-        Field[] fields=cl.getFields();
+        Field[] fields=cl.getDeclaredFields();
         Map<String,String> dataParams=new HashMap<>();
         String requestUrl=null;
         File[] files=null;
