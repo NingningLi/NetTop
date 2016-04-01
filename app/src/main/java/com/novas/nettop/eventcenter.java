@@ -1,6 +1,7 @@
 package com.novas.nettop;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import java.util.HashMap;
@@ -19,6 +20,10 @@ public class eventcenter {
         @Override
         public void handleMessage(Message msg) {
             System.out.println("receive");
+            if(Looper.myLooper()==Looper.getMainLooper())
+            {
+                System.out.println("主线程运行");
+            }
             if(msg.what==1)
             {
                 System.out.println("receive");

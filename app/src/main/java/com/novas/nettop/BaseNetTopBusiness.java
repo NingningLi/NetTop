@@ -3,8 +3,12 @@ package com.novas.nettop;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -37,14 +41,92 @@ public class BaseNetTopBusiness {
     }
     public void  startHttpUrlConnection(NetTopRequest request)
     {
-        if(request.responseType==HttpResponseType.REQUSET_WITH_PARAMS)
+        if(request.files==null)
         {
-            startHttpParamsConnection(request);
+            startSocketConnection(request);
         }
         else
         {
-            startHttpNoParamsConnection(request);
+            if(request.responseType==HttpResponseType.REQUSET_WITH_PARAMS)
+            {
+                startHttpParamsConnection(request);
+            }
+            else
+            {
+                startHttpNoParamsConnection(request);
+            }
         }
+    }
+    public HttpResponse startSocketConnection(NetTopRequest request)
+    {
+        System.out.println("socket");
+        HttpResponse response=null;
+        URL url = null;
+        try {
+            url = new URL(request.requesturl);
+            int port = url.getPort()==-1 ? 80 : url.getPort();
+            Socket socket = new Socket(InetAddress.getByName(url.getHost()), port);
+            OutputStream oos=socket.getOutputStream();
+            HttpHeaderBuilder httpHeaderBuilder = HttpHeaderBuilder.getHttpHeaderBuilderInstance();
+            httpHeaderBuilder.buildSocket(request.dataParams, oos, url);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String str = reader.readLine();
+            StringBuilder sb=new StringBuilder();
+            int length=0;
+            if(str.contains("200"))
+            {
+                while (str!=null&&str.length()>0)
+                {
+                    str=reader.readLine();
+                    System.out.println(str);
+                    if(str.contains("Content-Length"))
+                    {
+                        String[] args=str.split(":");
+                        length=Integer.parseInt(args[1].trim());
+                    }
+                }
+                System.out.println(length);
+                char[] chars=new char[length];
+                reader.read(chars);
+                socket.close();
+                int end=0;
+                if((int)chars[length-2]==13&&(int)chars[length-1]==10)
+                {
+                    end=length-2;
+                }
+                else
+                {
+                    end=length;
+                }
+                byte[] bytes=new String(chars,0,end).getBytes();
+                response=new HttpResponse(bytes);
+                center.postSuccess(response,listener);
+            }
+            else
+            {
+                socket.close();
+                center.postFail(object,listener);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            center.postError(object, listener);
+        }
+        catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+            center.postError(object, listener);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            center.postError(object, listener);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            center.postError(object, listener);
+        }
+        return response;
     }
     //从服务器获取图片,get情况
     public HttpResponse startHttpNoParamsConnection(NetTopRequest request)

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -109,7 +110,7 @@ public class HttpHeaderBuilder {
             StringBuffer sb = new StringBuffer();
             sb.append(LINE);
             sb.append("Content-Disposition: form-data; name="+entry.getKey() + LINE_END);
-            sb.append(LINE_END);
+           // sb.append(LINE_END);
             sb.append(entry.getValue());
             sb.append(LINE_END);
             outputStream.write(sb.toString().getBytes());
@@ -117,5 +118,25 @@ public class HttpHeaderBuilder {
         byte[] end_data = (PREFIX+BOUNDARY+PREFIX+LINE_END).getBytes();
         outputStream.write(end_data);
     }
-
+    public void buildSocket(Map<String,String> map,OutputStream outputStream,URL url)throws Exception
+    {
+        StringBuilder sb=new StringBuilder();
+        String params="";
+        for(Map.Entry<String,String> entry:map.entrySet())
+        {
+            params=params+"&"+entry.getKey()+"="+entry.getValue();
+        }
+        params=params.substring(1);
+        System.out.println("params=" + params);
+        sb.append("POST "+url.getPath()+" HTTP/1.1\r\n");
+        int port = url.getPort()==-1 ? 80 : url.getPort();
+        sb.append("HOST: "+url.getHost()+":"+port+"\r\n");
+        sb.append("Content-Length: "+params.length()+"\r\n");
+        sb.append("Content-Type: application/x-www-form-urlencoded\r\n");
+        sb.append("\r\n");
+        sb.append(params+"\r\n");
+        sb.append("\r\n");
+        sb.append("\r\n");
+        outputStream.write(sb.toString().getBytes());
+    }
 }
