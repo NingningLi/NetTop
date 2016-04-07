@@ -126,17 +126,20 @@ public class HttpHeaderBuilder {
         {
             params=params+"&"+entry.getKey()+"="+entry.getValue();
         }
-        params=params.substring(1);
+        if(params.length()>0)
+        {
+            params=params.substring(1);
+        }
         System.out.println("params=" + params);
         sb.append("POST "+url.getPath()+" HTTP/1.1\r\n");
         int port = url.getPort()==-1 ? 80 : url.getPort();
         sb.append("HOST: "+url.getHost()+":"+port+"\r\n");
-        sb.append("Content-Length: "+params.length()+"\r\n");
-        sb.append("Content-Type: application/x-www-form-urlencoded\r\n");
+        sb.append("Content-Length: "+(params.getBytes().length)+"\r\n");
+        sb.append("Content-Type: application/x-www-form-urlencoded;charset=gbk\r\n");
         sb.append("\r\n");
         sb.append(params+"\r\n");
         sb.append("\r\n");
         sb.append("\r\n");
-        outputStream.write(sb.toString().getBytes());
+        outputStream.write(sb.toString().getBytes("gbk"));
     }
 }

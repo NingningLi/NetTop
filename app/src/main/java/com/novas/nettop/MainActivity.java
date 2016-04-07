@@ -21,8 +21,20 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(HttpResponse response) {
                 System.out.println("成功");
                 byte[] bytes=response.bytes;
-                System.out.println(new String(bytes));
-                textView.setText(new String(bytes));
+
+                try
+                {  System.out.println(bytes.length);
+                    for(int i=0;i<bytes.length;i++)
+                    {
+                        System.out.println("bytes="+bytes[i]);
+                    }
+                    System.out.println(new String(bytes,"gbk"));
+                    textView.setText(new String(bytes, "gbk"));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
 
             @Override

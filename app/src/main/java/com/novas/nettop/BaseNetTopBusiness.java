@@ -69,6 +69,26 @@ public class BaseNetTopBusiness {
             OutputStream oos=socket.getOutputStream();
             HttpHeaderBuilder httpHeaderBuilder = HttpHeaderBuilder.getHttpHeaderBuilderInstance();
             httpHeaderBuilder.buildSocket(request.dataParams, oos, url);
+            InputStream is=socket.getInputStream();
+            byte[] bytes=new byte[1024*1024];
+            int length=is.read(bytes);
+            int loc=0;
+            byte[] b=null;
+            for(int i=0;i<length-1;i++)
+            {
+                if(bytes[i]==13&&bytes[i+1]==10)
+                {
+                    System.out.println("loc="+loc+"i="+i+"  "+bytes[i]);
+                    b=new byte[i-loc];
+                    System.out.println(b.length);
+                    System.arraycopy(bytes,loc,b,0,b.length);
+                    loc=i+2;
+                    System.out.println(new String(b,"gbk"));
+                }
+            }
+            response=new HttpResponse(b);
+            center.postSuccess(response,listener);
+            /*
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String str = reader.readLine();
             StringBuilder sb=new StringBuilder();
@@ -77,16 +97,16 @@ public class BaseNetTopBusiness {
             {
                 while (str!=null&&str.length()>0)
                 {
-                    str=reader.readLine();
                     System.out.println(str);
                     if(str.contains("Content-Length"))
                     {
                         String[] args=str.split(":");
                         length=Integer.parseInt(args[1].trim());
                     }
+                    str=reader.readLine();
                 }
                 System.out.println(length);
-                char[] chars=new char[length];
+                byte[] chars=new byte[length];
                 reader.read(chars);
                 socket.close();
                 int end=0;
@@ -98,7 +118,7 @@ public class BaseNetTopBusiness {
                 {
                     end=length;
                 }
-                byte[] bytes=new String(chars,0,end).getBytes();
+                byte[] bytes=new String(chars,0,end).getBytes("gbk");
                 response=new HttpResponse(bytes);
                 center.postSuccess(response,listener);
             }
@@ -107,6 +127,7 @@ public class BaseNetTopBusiness {
                 socket.close();
                 center.postFail(object,listener);
             }
+            */
         } catch (MalformedURLException e) {
             e.printStackTrace();
             center.postError(object, listener);
