@@ -74,60 +74,64 @@ public class BaseNetTopBusiness {
             int length=is.read(bytes);
             int loc=0;
             byte[] b=null;
-            for(int i=0;i<length-1;i++)
+            int i=0;
+            int j=0;
+            System.out.println(new String(bytes,0,length,"gbk"));
+            //  byte[] temp=new byte[0];
+            int bytelength=0;
+            for(i=0;i<length-1;i++)
             {
                 if(bytes[i]==13&&bytes[i+1]==10)
                 {
-                    System.out.println("loc="+loc+"i="+i+"  "+bytes[i]);
-                    b=new byte[i-loc];
-                    System.out.println(b.length);
-                    System.arraycopy(bytes,loc,b,0,b.length);
-                    loc=i+2;
-                    System.out.println(new String(b,"gbk"));
-                }
-            }
-            response=new HttpResponse(b);
-            center.postSuccess(response,listener);
-            /*
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String str = reader.readLine();
-            StringBuilder sb=new StringBuilder();
-            int length=0;
-            if(str.contains("200"))
-            {
-                while (str!=null&&str.length()>0)
-                {
-                    System.out.println(str);
-                    if(str.contains("Content-Length"))
+                    if(bytes[i+2]==13&&bytes[i+3]==10&&bytes[i+4]==13&&bytes[i+5]==10)
                     {
-                        String[] args=str.split(":");
-                        length=Integer.parseInt(args[1].trim());
+                        j=i+6;
+                        System.out.println("===="+bytes[i+2]+"  "+bytes[i+3]+"  "+bytes[i+4]+"  "+bytes[i+5]+" "+bytes[i+6]);
+                        break;
                     }
-                    str=reader.readLine();
+                    b=new byte[i-loc];
+                  //  System.out.println("loc=" + loc + "i=" + i + "  " + bytes[i] + " " + length);
+                    System.arraycopy(bytes, loc, b, 0,b.length);
+                    loc=i+2;
+                    // System.out.println(new String(b,"gbk"));
+                    String s=new String(b,"gbk");
+                    System.out.println("s=" + s);
+                    if(s.contains("Content-Length"))
+                    {
+                        String[] args=s.split(":");
+                        bytelength=Integer.parseInt(args[1].trim());
+                    }
                 }
-                System.out.println(length);
-                byte[] chars=new byte[length];
-                reader.read(chars);
-                socket.close();
-                int end=0;
-                if((int)chars[length-2]==13&&(int)chars[length-1]==10)
-                {
-                    end=length-2;
-                }
-                else
-                {
-                    end=length;
-                }
-                byte[] bytes=new String(chars,0,end).getBytes("gbk");
-                response=new HttpResponse(bytes);
-                center.postSuccess(response,listener);
             }
-            else
+            int templength=length-j;
+         //   System.out.println("bytelength="+bytelength+"j="+j+"templength="+templength);
+         //   System.out.println("=====8888="+bytes[length-4]+"  "+bytes[length-3]+"  "+bytes[length-2]+"   "+bytes[length-1]);
+            byte[] dest=new byte[bytelength-2];
+            loc=0;
+            System.arraycopy(bytes, j, dest, 0, templength);
+       //     System.out.println("string=" + new String(dest,0,templength, "gbk"));
+            while (templength<dest.length)
             {
-                socket.close();
-                center.postFail(object,listener);
-            }
-            */
+                bytes=new byte[1024*1024];
+                length=is.read(bytes);
+                ///  System.out.println("length="+templength);
+               // System.out.println("read=" + new String(bytes,0,length,"gbk"));
+             //   for(int l=0;l<length;l++)
+              //  {
+               //     dest[l+templength]=bytes[l];
+               // }
+                System.arraycopy(bytes, 0, dest, templength, length);
+                templength=templength+length;
+                //  System.out.println("string=" + new String(dest,0,templength-500, "gbk"));
+              //  System.out.println("string=" + new String(dest,0,templength, "gbk"));
+               // System.out.println("length    ="+templength);
+            }//
+            byte[] desttemp=new byte[dest.length-2];
+            System.arraycopy(dest,0,desttemp,0,desttemp.length);
+            response=new HttpResponse(desttemp);
+          //  System.out.println("string=" + new String(dest, "gbk"));
+           // listener.onSuccess(response);
+            center.postSuccess(response,listener);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             center.postError(object, listener);

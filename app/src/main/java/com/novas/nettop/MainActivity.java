@@ -11,9 +11,27 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String s="\r\n";
+        for(int i=0;i<1000;i++)
+        {
+            s=s+"demo:"+i;
+        }
+        s=s+"\r\n";
+        try {
+            byte[] bytes=s.getBytes("gbk");
+            System.out.println("length="+
+                    s.length()+" "+new String(bytes,"gbk").length());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
         final TextView textView=(TextView)this.findViewById(R.id.text);
         firstRequest arequest=new firstRequest();
         BaseNetTopBusiness baseNetTopBusiness=new BaseNetTopBusiness(new NetTopListener() {
@@ -24,12 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
                 try
                 {  System.out.println(bytes.length);
-                    for(int i=0;i<bytes.length;i++)
-                    {
-                        System.out.println("bytes="+bytes[i]);
-                    }
+
                     System.out.println(new String(bytes,"gbk"));
-                    textView.setText(new String(bytes, "gbk"));
+                    textView.setText(new String(bytes, "gbk").substring(3680)+"");
                 }
                 catch (Exception e)
                 {
